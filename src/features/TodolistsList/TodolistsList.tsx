@@ -1,31 +1,29 @@
 import React, { useCallback, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { AppRootStateType } from "app/store";
 import {
   addTodolistTC,
   changeTodolistTitleTC,
   fetchTodolistsTC,
   FilterValuesType,
   removeTodolistTC,
-  TodolistDomainType,
   todolistsActions,
 } from "./todolists-reducer";
-import { addTaskTC, removeTaskTC, TasksStateType, updateTaskTC } from "./tasks-reducer";
+import { addTaskTC, removeTaskTC, updateTaskTC } from "./tasks-reducer";
 import { TaskStatuses } from "api/todolists-api";
 import { Grid, Paper } from "@mui/material";
 import { AddItemForm } from "components/AddItemForm/AddItemForm";
 import { Todolist } from "./Todolist/Todolist";
 import { Navigate } from "react-router-dom";
 import { useAppDispatch } from "hooks/useAppDispatch";
+import { useAppSelector } from "hooks/useAppSelector";
+import { selectIsLoggedIn, selectTodoLists } from "app/app-selectors";
 
 type PropsType = {
   demo?: boolean;
 };
 
 export const TodolistsList: React.FC<PropsType> = ({ demo = false }) => {
-  const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>((state) => state.todolists);
-  const tasks = useSelector<AppRootStateType, TasksStateType>((state) => state.tasks);
-  const isLoggedIn = useSelector<AppRootStateType, boolean>((state) => state.auth.isLoggedIn);
+  const todolists = useAppSelector(selectTodoLists);
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
 
   const dispatch = useAppDispatch();
 
@@ -91,14 +89,12 @@ export const TodolistsList: React.FC<PropsType> = ({ demo = false }) => {
       </Grid>
       <Grid container spacing={3}>
         {todolists.map((tl) => {
-          let allTodolistTasks = tasks[tl.id];
-
+          // let allTodolistTasks = tasks[tl.id];
           return (
             <Grid item key={tl.id}>
               <Paper style={{ padding: "10px" }}>
                 <Todolist
                   todolist={tl}
-                  tasks={allTodolistTasks}
                   removeTask={removeTask}
                   changeFilter={changeFilter}
                   addTask={addTask}
