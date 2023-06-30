@@ -40,6 +40,9 @@ const slice = createSlice({
         action.payload.todolists.forEach((tl) => {
           state[tl.id] = [];
         });
+      })
+      .addCase(todolistsActions.clearTodoDataAC, (state, action) => {
+        return {};
       });
   },
 });
