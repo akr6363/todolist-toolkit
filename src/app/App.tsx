@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import { selectIsInitialized, selectIsLoggedIn, selectStatus } from "app/app-selectors";
-import { useAppSelector } from "hooks/useAppSelector";
+import { useAppSelector } from "common/hooks/useAppSelector";
 
 type PropsType = {
   demo?: boolean;
