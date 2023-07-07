@@ -1,8 +1,4 @@
-import { authActions } from "features/Login/auth-reducer";
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { AppThunk } from "app/store";
-import { authAPI } from "features/Login/auth-api";
-import { createAppAsyncThunk } from "common/utils";
 
 const initialState = {
   status: "idle" as RequestStatusType,
@@ -31,32 +27,5 @@ const slice = createSlice({
 
 export type RequestStatusType = "idle" | "loading" | "succeeded" | "failed";
 
-// export const initializeApp = createAppAsyncThunk<any, any>(
-//     'app/initializeApp',
-//     async (arg, thunkAPI) => {
-//       const {dispatch, rejectWithValue} = thunkAPI
-//       try {
-//         const res = await authAPI.me()
-//         if (res.data.resultCode === 0) {
-//           dispatch(authActions.setIsLoggedInAC({ isLoggedIn: true }));
-//         } else {
-//         }
-//         dispatch(appActions.setAppInitializedAC({ isInitialized: true }));
-//       }
-//       catch (e) {
-//
-//       }
-//     }
-// )
-
-// export const initializeAppTC = (): AppThunk => (dispatch) => {
-//   authAPI.me().then((res) => {
-//     if (res.data.resultCode === 0) {
-//       dispatch(authActions.setIsLoggedInAC({ isLoggedIn: true }));
-//     } else {
-//     }
-//     dispatch(appActions.setAppInitializedAC({ isInitialized: true }));
-//   });
-// };
 export const appReducer = slice.reducer;
 export const appActions = slice.actions;

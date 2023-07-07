@@ -7,6 +7,14 @@ import axios, { AxiosError } from "axios";
 //   dispatch(appActions.setAppStatusAC({ status: "failed" }));
 // };
 
+/**
+
+ Handles server network errors and dispatches appropriate actions to update application state
+ @param {unknown} e - The error object thrown by the server
+ @param {Dispatch} dispatch - The dispatch function provided by the Redux store
+ @returns {void}
+ */
+
 export const handleServerNetworkError = (e: unknown, dispatch: Dispatch) => {
   const err = e as Error | AxiosError<{ error: string }>;
   if (axios.isAxiosError(err)) {

@@ -19,6 +19,11 @@ import { LoginParamsType } from "features/Login/auth-api";
 
 import { ResponseType } from "common/types";
 
+type LoginFormErrorsType = {
+  email: string;
+  password: string;
+};
+
 export const Login = () => {
   const dispatch = useAppDispatch();
 
@@ -26,16 +31,14 @@ export const Login = () => {
 
   const formik = useFormik({
     validate: (values) => {
-      // if (!values.email) {
-      //   return {
-      //     email: "Email is required",
-      //   };
-      // }
-      // if (!values.password) {
-      //   return {
-      //     password: "Password is required",
-      //   };
-      // }
+      let errors = {} as LoginFormErrorsType;
+      if (!values.email) {
+        errors.email = "Email is required";
+      }
+      if (!values.password) {
+        errors.password = "Password is required";
+      }
+      return errors;
     },
     initialValues: {
       email: "",
