@@ -6,6 +6,7 @@ import { TodolistType } from "features/TodolistsList/todolists-types";
 import { createAppAsyncThunk, handleServerAppError, handleServerNetworkError } from "common/utils";
 import { ResultCode } from "common/enums";
 import { clearData } from "common/actions";
+import { thunkTryCatch } from "common/utils/thunk-try-catch";
 
 const slice = createSlice({
   name: "todolists",
@@ -93,9 +94,7 @@ export const addTodolist = createAppAsyncThunk<{ todolist: TodolistType }, { tit
   "todolists/addTodolist",
   async (arg, thunkAPI) => {
     const { dispatch, rejectWithValue } = thunkAPI;
-    try {
-      dispatch(appActions.setAppStatusAC({ status: "loading" }));
-
+    return thunkTryCatch(thunkAPI, async () => {
       const res = await todolistsAPI.createTodolist(arg.title);
       if (res.data.resultCode === ResultCode.success) {
         dispatch(appActions.setAppStatusAC({ status: "succeeded" }));
@@ -104,34 +103,31 @@ export const addTodolist = createAppAsyncThunk<{ todolist: TodolistType }, { tit
         handleServerAppError(res.data, dispatch);
         return rejectWithValue(null);
       }
-    } catch (e) {
-      handleServerNetworkError(e, dispatch);
-      return rejectWithValue(null);
-    }
+    });
   }
 );
 
-export const changeTodolistTitle = createAppAsyncThunk<{ id: string; title: string }, { id: string; title: string }>(
-  "todolists/changeTodolistTitle",
-  async (arg, thunkAPI) => {
-    const { dispatch, rejectWithValue } = thunkAPI;
-    try {
-      dispatch(appActions.setAppStatusAC({ status: "loading" }));
+export const changeTodolistTitle = createAppAsyncThunk<
+  { id: string; title: string },
+  { id: string; title: string }
+>("todolists/changeTodolistTitle", async (arg, thunkAPI) => {
+  const { dispatch, rejectWithValue } = thunkAPI;
+  try {
+    dispatch(appActions.setAppStatusAC({ status: "loading" }));
 
-      const res = await todolistsAPI.updateTodolist(arg.id, arg.title);
-      if (res.data.resultCode === ResultCode.success) {
-        dispatch(appActions.setAppStatusAC({ status: "succeeded" }));
-        return { id: arg.id, title: arg.title };
-      } else {
-        handleServerAppError(res.data, dispatch);
-        return rejectWithValue(null);
-      }
-    } catch (e) {
-      handleServerNetworkError(e, dispatch);
+    const res = await todolistsAPI.updateTodolist(arg.id, arg.title);
+    if (res.data.resultCode === ResultCode.success) {
+      dispatch(appActions.setAppStatusAC({ status: "succeeded" }));
+      return { id: arg.id, title: arg.title };
+    } else {
+      handleServerAppError(res.data, dispatch);
       return rejectWithValue(null);
     }
+  } catch (e) {
+    handleServerNetworkError(e, dispatch);
+    return rejectWithValue(null);
   }
-);
+});
 
 // types
 

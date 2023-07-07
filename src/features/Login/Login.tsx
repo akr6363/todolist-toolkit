@@ -1,11 +1,23 @@
 import React from "react";
-import { useFormik } from "formik";
+import { FormikHelpers, useFormik } from "formik";
 import { useSelector } from "react-redux";
 import { AppRootStateType } from "app/store";
 import { Navigate } from "react-router-dom";
 import { useAppDispatch } from "common/hooks/useAppDispatch";
-import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, TextField } from "@mui/material";
-import { loginTC } from "features/Login/auth-reducer";
+import {
+  Button,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  Grid,
+  TextField,
+} from "@mui/material";
+import { authThunks } from "features/Login/auth-reducer";
+import { LoginParamsType } from "features/Login/auth-api";
+
+import { ResponseType } from "common/types";
 
 export const Login = () => {
   const dispatch = useAppDispatch();
@@ -14,24 +26,33 @@ export const Login = () => {
 
   const formik = useFormik({
     validate: (values) => {
-      if (!values.email) {
-        return {
-          email: "Email is required",
-        };
-      }
-      if (!values.password) {
-        return {
-          password: "Password is required",
-        };
-      }
+      // if (!values.email) {
+      //   return {
+      //     email: "Email is required",
+      //   };
+      // }
+      // if (!values.password) {
+      //   return {
+      //     password: "Password is required",
+      //   };
+      // }
     },
     initialValues: {
       email: "",
       password: "",
       rememberMe: false,
     },
-    onSubmit: (values) => {
-      dispatch(loginTC(values));
+    onSubmit: (values, formikHelpers: FormikHelpers<LoginParamsType>) => {
+      dispatch(authThunks.login(values))
+        .unwrap()
+        .then((res) => {})
+        .catch((reason: ResponseType) => {
+          if (reason.fieldsErrors) {
+            reason.fieldsErrors.forEach((error) => {
+              formikHelpers.setFieldError(error.field, error.error);
+            });
+          }
+        });
     },
   });
 
@@ -58,11 +79,18 @@ export const Login = () => {
             <FormGroup>
               <TextField label="Email" margin="normal" {...formik.getFieldProps("email")} />
               {formik.errors.email ? <div>{formik.errors.email}</div> : null}
-              <TextField type="password" label="Password" margin="normal" {...formik.getFieldProps("password")} />
+              <TextField
+                type="password"
+                label="Password"
+                margin="normal"
+                {...formik.getFieldProps("password")}
+              />
               {formik.errors.password ? <div>{formik.errors.password}</div> : null}
               <FormControlLabel
                 label={"Remember me"}
-                control={<Checkbox {...formik.getFieldProps("rememberMe")} checked={formik.values.rememberMe} />}
+                control={
+                  <Checkbox {...formik.getFieldProps("rememberMe")} checked={formik.values.rememberMe} />
+                }
               />
               <Button type={"submit"} variant={"contained"} color={"primary"}>
                 Login

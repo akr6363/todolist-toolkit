@@ -7,7 +7,8 @@ import { Todolist } from "./Todolist/Todolist";
 import { Navigate } from "react-router-dom";
 import { selectIsLoggedIn, selectTodoLists } from "app/app-selectors";
 import { TaskStatuses } from "common/enums";
-import { useAppDispatch, useAppSelector } from "common/hooks";
+import { useAppSelector } from "common/hooks";
+import { useActions } from "common/hooks/useActions";
 
 type PropsType = {
   demo?: boolean;
@@ -17,69 +18,73 @@ export const TodolistsList: React.FC<PropsType> = ({ demo = false }) => {
   const todolists = useAppSelector(selectTodoLists);
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
 
-  const dispatch = useAppDispatch();
+  const {
+    fetchTodolists,
+    changeTodolistTitle: changeTodolistTitleThunk,
+    removeTodolist: removeTodolistThunk,
+    addTodolist: addTodolistThunk,
+  } = useActions(todolistsThunks);
+  const {
+    removeTask: removeTaskThunk,
+    addTask: addTaskThunk,
+    updateTask,
+    fetchTasks,
+  } = useActions(tasksThunks);
+
+  const { changeTodolistFilterAC } = useActions(todolistsActions);
 
   useEffect(() => {
     if (demo || !isLoggedIn) {
       return;
     }
-    dispatch(todolistsThunks.fetchTodolists());
+    fetchTodolists();
   }, []);
 
   const removeTask = useCallback(function (id: string, todolistId: string) {
-    const thunk = tasksThunks.removeTask({ taskId: id, todolistId });
-    dispatch(thunk);
+    removeTaskThunk({ taskId: id, todolistId });
   }, []);
 
   const addTask = useCallback(function (title: string, todolistId: string) {
-    const thunk = tasksThunks.addTask({ title, todolistId });
-    dispatch(thunk);
+    addTaskThunk({ title, todolistId });
   }, []);
 
   const changeStatus = useCallback(function (id: string, status: TaskStatuses, todolistId: string) {
-    const thunk = tasksThunks.updateTask({
+    const payload = {
       taskId: id,
       domainModel: {
         status,
       },
       todolistId,
-    });
-    dispatch(thunk);
+    };
+    updateTask(payload);
   }, []);
 
   const changeTaskTitle = useCallback(function (id: string, newTitle: string, todolistId: string) {
-    const thunk = tasksThunks.updateTask({
+    const payload = {
       taskId: id,
       domainModel: {
         title: newTitle,
       },
       todolistId,
-    });
-    dispatch(thunk);
+    };
+    updateTask(payload);
   }, []);
 
   const changeFilter = useCallback(function (value: FilterValuesType, todolistId: string) {
-    const action = todolistsActions.changeTodolistFilterAC({ id: todolistId, filter: value });
-    dispatch(action);
+    changeTodolistFilterAC({ id: todolistId, filter: value });
   }, []);
 
   const removeTodolist = useCallback(function (id: string) {
-    const thunk = todolistsThunks.removeTodolist({ todolistId: id });
-    dispatch(thunk);
+    removeTodolistThunk({ todolistId: id });
   }, []);
 
   const changeTodolistTitle = useCallback(function (id: string, title: string) {
-    const thunk = todolistsThunks.changeTodolistTitle({ id, title });
-    dispatch(thunk);
+    changeTodolistTitleThunk({ id, title });
   }, []);
 
-  const addTodolist = useCallback(
-    (title: string) => {
-      const thunk = todolistsThunks.addTodolist({ title });
-      dispatch(thunk);
-    },
-    [dispatch]
-  );
+  const addTodolist = useCallback((title: string) => {
+    addTodolistThunk({ title });
+  }, []);
 
   if (!isLoggedIn) {
     return <Navigate to={"/login"} />;

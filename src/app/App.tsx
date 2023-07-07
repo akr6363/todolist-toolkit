@@ -3,10 +3,8 @@ import "./App.css";
 import { TodolistsList } from "features/TodolistsList/TodolistsList";
 import { ErrorSnackbar } from "components/ErrorSnackbar/ErrorSnackbar";
 import { useDispatch } from "react-redux";
-import { initializeAppTC } from "./app-reducer";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Login } from "features/Login/Login";
-import { logoutTC } from "features/Login/auth-reducer";
 import {
   AppBar,
   Button,
@@ -20,6 +18,9 @@ import {
 import { Menu } from "@mui/icons-material";
 import { selectIsInitialized, selectIsLoggedIn, selectStatus } from "app/app-selectors";
 import { useAppSelector } from "common/hooks/useAppSelector";
+import { authThunks } from "features/Login/auth-reducer";
+import { bindActionCreators } from "redux";
+import { useActions } from "common/hooks/useActions";
 
 type PropsType = {
   demo?: boolean;
@@ -29,14 +30,14 @@ function App({ demo = false }: PropsType) {
   const status = useAppSelector(selectStatus);
   const isInitialized = useAppSelector(selectIsInitialized);
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
-  const dispatch = useDispatch<any>();
+  const { initializeApp, logout } = useActions(authThunks);
 
   useEffect(() => {
-    dispatch(initializeAppTC());
+    initializeApp();
   }, []);
 
   const logoutHandler = useCallback(() => {
-    dispatch(logoutTC());
+    logout();
   }, []);
 
   if (!isInitialized) {

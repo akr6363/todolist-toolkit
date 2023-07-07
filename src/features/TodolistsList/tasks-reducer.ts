@@ -6,6 +6,7 @@ import { ResultCode, TaskPriorities, TaskStatuses } from "common/enums";
 import { TaskType, UpdateTaskModelType } from "features/TodolistsList/todolists-types";
 import { todolistsAPI } from "features/TodolistsList/todolists-api";
 import { clearData } from "common/actions";
+import { thunkTryCatch } from "common/utils/thunk-try-catch";
 
 const slice = createSlice({
   name: "tasks",
@@ -68,7 +69,8 @@ const addTask = createAppAsyncThunk<{ task: TaskType }, { title: string; todolis
   "tasks/addTask",
   async (arg, thunkAPI) => {
     const { dispatch, rejectWithValue } = thunkAPI;
-    try {
+
+    return thunkTryCatch(thunkAPI, async () => {
       dispatch(appActions.setAppStatusAC({ status: "loading" }));
       const res = await todolistsAPI.createTask(arg.todolistId, arg.title);
       if (res.data.resultCode === ResultCode.success) {
@@ -79,10 +81,7 @@ const addTask = createAppAsyncThunk<{ task: TaskType }, { title: string; todolis
         handleServerAppError(res.data, dispatch);
         return rejectWithValue(null);
       }
-    } catch (e) {
-      handleServerNetworkError(e, dispatch);
-      return rejectWithValue(null);
-    }
+    });
   }
 );
 
