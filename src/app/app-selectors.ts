@@ -1,6 +1,6 @@
 import { AppRootStateType } from "app/store";
 import { createSelector } from "@reduxjs/toolkit";
-import { FilterValuesType } from "features/TodolistsList/todolists-reducer";
+import { FilterValuesType } from "features/TodolistsList/todolists/model/todolists-reducer";
 import { TaskStatuses } from "common/enums";
 
 export const selectIsLoggedIn = (state: AppRootStateType) => state.auth.isLoggedIn;

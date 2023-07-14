@@ -1,9 +1,11 @@
 import React, { ChangeEvent, KeyboardEvent, useState } from "react";
 import { IconButton, TextField } from "@mui/material";
 import { AddBox } from "@mui/icons-material";
+import { ResponseType } from "common/types";
+import { TodolistType } from "features/TodolistsList/todolists/api/todolists-api-types";
 
 type AddItemFormPropsType = {
-  addItem: (title: string) => void;
+  addItem: (title: string) => Promise<any>;
   disabled?: boolean;
 };
 
@@ -11,10 +13,26 @@ export const AddItemForm = React.memo(function ({ addItem, disabled = false }: A
   let [title, setTitle] = useState("");
   let [error, setError] = useState<string | null>(null);
 
+  // const _addItemHandler = () => {
+  //   if (title.trim() !== "") {
+  //     addItem(title);
+  //     setTitle("");
+  //   } else {
+  //     setError("Title is required");
+  //   }
+  // };
+
   const addItemHandler = () => {
     if (title.trim() !== "") {
-      addItem(title);
-      setTitle("");
+      // временная проверка на addItem
+      addItem &&
+        addItem(title)
+          .then((res) => {
+            setTitle("");
+          })
+          .catch((reason: ResponseType) => {
+            setError(reason.messages[0]);
+          });
     } else {
       setError("Title is required");
     }

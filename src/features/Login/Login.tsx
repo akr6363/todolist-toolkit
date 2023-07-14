@@ -18,6 +18,7 @@ import { authThunks } from "features/Login/auth-reducer";
 import { LoginParamsType } from "features/Login/auth-api";
 
 import { ResponseType } from "common/types";
+import { useActions } from "common/hooks/useActions";
 
 type LoginFormErrorsType = {
   email: string;
@@ -26,6 +27,7 @@ type LoginFormErrorsType = {
 
 export const Login = () => {
   const dispatch = useAppDispatch();
+  // const {login} = useActions(authThunks)
 
   const isLoggedIn = useSelector<AppRootStateType, boolean>((state) => state.auth.isLoggedIn);
 

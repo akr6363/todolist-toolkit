@@ -42,7 +42,7 @@ export const login = createAppAsyncThunk<{ isLoggedIn: boolean }, LoginParamsTyp
       const { dispatch, rejectWithValue } = thunkAPI;
       const res = await authAPI.login(data);
       if (res.data.resultCode === ResultCode.success) {
-        dispatch(appActions.setAppStatusAC({ status: "succeeded" }));
+        // dispatch(appActions.setAppStatusAC({ status: "succeeded" }));
         return { isLoggedIn: true };
       } else {
         const isShowAppError = !res.data.fieldsErrors.length;
@@ -59,7 +59,7 @@ const logout = createAppAsyncThunk<{ isLoggedIn: boolean }, void>("auth/logout",
     const res = await authAPI.logout();
     if (res.data.resultCode === ResultCode.success) {
       dispatch(clearData());
-      dispatch(appActions.setAppStatusAC({ status: "succeeded" }));
+      //dispatch(appActions.setAppStatusAC({ status: "succeeded" }));
       return { isLoggedIn: false };
     } else {
       handleServerAppError(res.data, dispatch);

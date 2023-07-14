@@ -1,12 +1,10 @@
 import { TaskPriorities, TaskStatuses } from "common/enums";
 
-export type TodolistType = {
-  id: string;
-  title: string;
-  addedDate: string;
-  order: number;
+export type GetTasksResponse = {
+  error: string | null;
+  totalCount: number;
+  items: TaskType[];
 };
-
 export type TaskType = {
   description: string;
   title: string;
@@ -19,6 +17,7 @@ export type TaskType = {
   order: number;
   addedDate: string;
 };
+
 export type UpdateTaskModelType = {
   title: string;
   description: string;
@@ -26,9 +25,4 @@ export type UpdateTaskModelType = {
   priority: TaskPriorities;
   startDate: string;
   deadline: string;
-};
-export type GetTasksResponse = {
-  error: string | null;
-  totalCount: number;
-  items: TaskType[];
 };

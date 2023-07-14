@@ -1,5 +1,5 @@
-import { tasksReducer, TasksStateType, tasksThunks } from "./tasks-reducer";
-import { todolistsThunks } from "features/TodolistsList/todolists-reducer";
+import { tasksReducer, TasksStateType, tasksThunks } from "features/TodolistsList/tasks/model/tasks-reducer";
+import { todolistsThunks } from "features/TodolistsList/todolists/model/todolists-reducer";
 import { TaskPriorities, TaskStatuses } from "common/enums";
 
 let startState: TasksStateType = {};
@@ -163,7 +163,9 @@ test("new array should be added when new todolist is added", () => {
     },
   };
 
-  const action = todolistsThunks.addTodolist.fulfilled(payload, "requestId", { title: payload.todolist.title });
+  const action = todolistsThunks.addTodolist.fulfilled(payload, "requestId", {
+    title: payload.todolist.title,
+  });
 
   const endState = tasksReducer(startState, action);
 
